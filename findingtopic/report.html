@@ -13,6 +13,7 @@
 			<tr>
 				<th>user code</th>
 				<th>mode</th>
+				<th>test</th>
 				{% for idx in range(5) %}
 					<th>short / long / confidence {{idx}}</th>
 				{% endfor %}
@@ -29,16 +30,17 @@
 						{% for i in range(hit.wordNum)  %}
 							{% if ans.topicIndex %}
 								{% if hit.version==1 %}
-									<li>v1{{ topicWords[ans.topicIndex|int]['terms'][i]['first'] }}</li>
+									<li>{{ topicWords[ans.topicIndex|int]['terms'][i]['first'] }}</li>
 								{% else %}
-									<li>no{{ topicWordsOld[ans.topicIndex|int]['terms'][i]['first'] }}</li>
+									<li>{{ topicWordsOld[ans.topicIndex|int]['terms'][i]['first'] }}</li>
 								{% endif %}
 							{% endif %}
 						{% endfor %}
 					</ul>
 					<span class='shortAnswer'>[{{ans.short}}]</span><br>
 					<span class='longAnswer'>{{ans.long}}</span> <br>
-					<span class='confidence'>{{ans.conf}}</span>
+					<span class='confidence'>confidence: {{ans.conf}}</span>
+					<span class='timeStamp'><br>took {{ans.duration}} sec</span>
 				</td>
 				{% endfor %}
 			</tr>

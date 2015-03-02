@@ -12,7 +12,9 @@
 <body>
 
 <div class='introduction'>
-We are university researchers attempting to measure how people make sense of words automatically extracted from newspaper articles. <br>Participants of this study are required to be at least 18 years old. Press the START button if you voluntarily agree to participate.
+We are researchers from the University of Maryland attempting to measure how people make sense of concepts discovered from newspaper articles. If you have any questions about this study, please contact Leah Findlater (http://terpconnect.umd.edu/~leahkf/). 
+<br>
+<br>Participants of the study are required to be at least 18 years old. Press the START button if you voluntarily agree to participate.
     <div class='start'><button class='start_button'>START</button></div>
 </div>
 
@@ -20,7 +22,7 @@ We are university researchers attempting to measure how people make sense of wor
 
 <div class='topic_representation' mode={{mode}} wordNum={{wordNum}} randomImage_idx={{randomImage_idx}}>
     <div class='instruction'>
-    Words in the figure below represent the main concept discussed of a set of articles. What concept do you think the words represent? Using the words in the box or any other words you want, describe that concept twice: with a short name and with a full sentence. Then, rate your confidence in that name and description. 
+    Words in the figure below represent the main concept discussed in a set of newspaper articles. What concept do you think the words represent? Using the words in the box or any other words you want, describe that concept twice: with a short name and with a full sentence. Then, rate your confidence in that name and description.
     </div>
     <ul class='topic_list'>
     {% for idx, topic in topics.iteritems() %}

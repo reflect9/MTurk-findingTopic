@@ -11,7 +11,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
-VERSION = 1
+VERSION = 3
 
 modes = ['word list','wordcloud','histogram','topic-in-a-box']
 # modes = ['word list','wordcloud','histogram','topic-in-a-box']
@@ -48,6 +48,7 @@ class LabelingHit(db.Model):
     answers = db.TextProperty()
     timestamp = db.TextProperty()
     version = db.IntegerProperty()
+    created = db.DateTimeProperty(auto_now_add=True)
 
     # timestamp_start = db.DateTimeProperty(auto_now_add=False)
     # timestamp_end = db.DateTimeProperty(auto_now_add=False)
@@ -80,7 +81,7 @@ class TaskHandler(webapp2.RequestHandler):
     def get(self):
         mode = random.choice(modes)
         wordNum = random.choice([5,10,20])
-        sample_idx = random.sample(range(len(topicJSON['topics'])),5)
+        sample_idx = random.sample(range(len(topicJSON['topics'])),6)
         randomImage_idx = random.choice([1,2,3,4,5]) 
         topics = {}
         for idx in sample_idx:
@@ -101,21 +102,65 @@ class ReportHandler(webapp2.RequestHandler):
     def get(self):
         file_topicJSON_old = open("dataset/nyt-50-topics-without stopiwords.json","r")
         topicJSON_old = json.loads(file_topicJSON_old.read())
-        query = db.GqlQuery("SELECT * FROM LabelingHit LIMIT 1000")
-        hits = []
-        for r in query.run():
-            r.ansList = json.loads(r.answers)
-            # r.ansTogether = []
-            # for i in range(len(r.ansList)/2):
-            #     r.ansTogether.append([r.ansList[i*2],r.ansList[i*2+1]])
-            # print r.ansList
-            # r.shortAnsList = ansList[0::2]
-            # r.longAnsList = ansList[1::2]
-            hits.append(r)
-        template_values = {'hits':hits, 'topicWords':topicJSON['topics'], 'topicWordsOld':topicJSON_old['topics']}
-        template = JINJA_ENVIRONMENT.get_template('report.html')
-        html = template.render(template_values)
-        self.response.out.write(html)
+
+        report_mode = self.request.get('mode', default_value='hit') # mode can be either 'hit','topic','configuration'
+        if report_mode == 'hit':
+            query = db.GqlQuery("SELECT * FROM LabelingHit WHERE version>2")
+            hits = []
+            for r in query.run():
+                r.ansList = json.loads(r.answers)
+                #r.timeList = map(lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%fZ"), json.loads(r.timestamp))
+                hits.append(r)
+            template_values = {'hits':hits, 'topicWords':topicJSON['topics'], 'topicWordsOld':topicJSON_old['topics']}
+            template = JINJA_ENVIRONMENT.get_template('report.html')
+            html = template.render(template_values)
+            self.response.out.write(html)
+        # elif report_mode == 'topic':
+        #     query = db.GqlQuery("SELECT * FROM LabelingHit")
+        #     summaries = []
+        #     # organize answers by topicIndex
+        #     for r in query.run():
+        #         r.ansList = json.loads(r.answers) 
+        #         for ans in r.ansList:
+        #             summaries.append({'topicIndex':ans.topicIndex, 
+        #                 'mode':r.mode, 
+        #                 'wordNum':r.wordNum,
+        #                 'short':ans.short,
+        #                 'long':ans.long,
+        #                 'conf':ans.conf,
+        #                 'duration':ans.duration'
+        #             })
+        #     #         if ans.topicIndex not in summaryByConfig: 
+        #     #             summaryByConfig[ans.topicIndex]= { 
+        #     #                 'word list':{'5':[], '10':[], '20':[]},
+        #     #                 'histogram':{'5':[], '10':[], '20':[]},
+        #     #                 'wordcloud':{'5':[], '10':[], '20':[]},
+        #     #                 'topic-in-a-box':{'5':[], '10':[], '20':[]},
+        #     #             }
+        #     #         summaryByConfig[r.mode][r.wordNum].append(ans)
+        #     # # now calculate summaries of each topic
+        #     # for topicIdx, topic in summaryByConfig.iteritems():
+        #     #     for visCode, visAnswers in topic.iteritems():
+        #     #         for wordNum, answers in visAnswers.iteritems():
+        #     #             totalDuration=0
+        #     #             for answer in answers[1:]: # ignore the first one which is sample
+        #     #                 totalDuration += answer.duration
+        #     #             avgDuration = totalDuration/(len(answers)-1)
+        #     #             visAnswers['']
+        #     durations = {}
+        #     for mCode in modes:
+        #         ansForMode = [i for i in summaries if i.mode == mCode]
+        #         durations[mCode] = sum(i.duration for i in ansForMode) / len(ansForMode)
+
+
+
+
+        # elif report_mode == 'configuration':
+        #     pass
+
+
+
+        
 
 class ReportCSVHandler(webapp2.RequestHandler):
     def get(self):

@@ -15,12 +15,18 @@ function validateAnswers() {
 }
 
 function submitAnswers() {
+	var timeSpentForAnswers = [];
+	for(var i=1;i<timeStamp.length;i++) {
+		timeSpentForAnswers.push((timeStamp[i]-timeStamp[i-1])/1000);
+	}
 	var answers = $.map($("li.topic"), function(topicEl,i) {
 		var topicIndex = $(topicEl).attr('topicIndex');
 		var shortAns = $(topicEl).find("input.short").val();
 		var longAns = $(topicEl).find("input.long").val();
+		var mode = $(".topic_representation").attr("mode");
 		var confAnswer = confidence[i]; 
-		return {"topicIndex":topicIndex, "short":shortAns, "long":longAns, "conf":confAnswer};
+		return {"topicIndex":topicIndex, "mode":mode, "short":shortAns, 
+				"long":longAns, "conf":confAnswer, "duration":timeSpentForAnswers[i]};
 	});
 	var answersJSON = JSON.stringify(answers);
 	var timeJSON = JSON.stringify(timeStamp);
@@ -64,7 +70,7 @@ $(document).ready(function() {
 	$("button.next").click(function(event) {
 		// show next question
 		var qN = parseInt($(event.target).attr("questionnumber"));
-		if(qN==5) { 
+		if(qN==6) { 
 			// submit and show the last message
 			if(!validateAnswers()) return;
 			timeStamp.push(new Date());
