@@ -66,24 +66,27 @@ $(document).ready(function() {
 		$(".introduction").hide();
 		timeStamp.push(new Date());
 	});
-
+	$("button.finish").click(function(event) {
+		// submit and show the last message
+		if(!validateAnswers()) {
+			$(event.target).prop('disabled', false);
+			return;
+		}
+		timeStamp.push(new Date());
+		// $("li.topic").hide();
+		// $("li.ending").show();
+		submitAnswers();
+	
+	});
 	$("button.next").click(function(event) {
 		// show next question
 		var qN = parseInt($(event.target).attr("questionnumber"));
-		if(qN==6) { 
-			// submit and show the last message
-			if(!validateAnswers()) return;
-			timeStamp.push(new Date());
-			// $("li.topic").hide();
-			// $("li.ending").show();
-			submitAnswers();
-		} else {
-			// proceed to next question
-			if(!validateAnswers()) return;
-			timeStamp.push(new Date());
-			$("li.topic").hide();
-			$("li.topic[questionnumber='"+(qN+1)+"']").show();
-		}
+		// proceed to next question
+		if(!validateAnswers()) return;
+		timeStamp.push(new Date());
+		$("li.topic").hide();
+		$("li.topic[questionnumber='"+(qN+1)+"']").show();
+		
 	});
 
 });

@@ -1,3 +1,14 @@
+@purple: rgb(155, 70, 129);
+@purple-light: #bf81b3;
+@skyblue: #02aff0;
+@yellow: #ffdc48;
+@grassgreen: #889a0f;
+@orange: #ea7e00;
+@paleblue: #54a6ad;
+@palegreen: #92ba67;
+@palered: #c96b6b;
+
+
 body {
     padding:20px;
 }
@@ -85,11 +96,6 @@ div.topic_representation {
     }    
 }
 
-
-table, th, td {
-    border:1px solid #ccc;
-    width:1500px;
-}
 
 
 div.topic_rep {
@@ -266,6 +272,7 @@ div.introduction {
     line-height: 1.5em;
     padding:10px;
     font-size:16px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 div.instruction {
@@ -310,6 +317,202 @@ table.reportTable {
 
     }
 }
+
+
+div.evaluation_container {
+    div.instruction {
+        font-family: Arial, Helvetica, sans-serif;
+        padding:0;
+        padding-bottom:20px;
+        margin-bottom:30px;
+        border-bottom:1px solid #000;
+
+    }
+    ul.evaluation_list {
+        list-style-type:none;   list-style:none;    margin:0px;     padding:0px;
+        li.evaluation {
+            list-style-type:none;   list-style:none;   
+            clear:both;
+        }
+        div.documents{
+            float:left;
+            width:480px;
+            padding-right:30px;
+            ul{
+                list-style-type:none;   list-style:none;    margin:0px;     padding:0px;
+                li{
+                    list-style-type:none;   list-style:none;   
+                    cursor:zoom-in;
+                    margin-bottom:15px;
+                    div.doc_title{
+                        font-family: Helvetica, sans-serif;
+                        font-weight:800;
+                        font-size:1.1em;
+                        span.doc_probability{
+
+                        }
+                        a.show_more {
+                        display:block;
+                        margin-top:3px;
+                        font-family:helvetica;
+                        font-weight:500;
+                        font-size:11px;
+                        color:#aaa;
+                        }
+                    }
+                    div.doc_fulltext {
+                        font-size:0.9em;
+                        display:none;
+                    }
+                }
+                
+            }
+        }
+        .descriptions {
+            width:500px;
+            float:left;
+            label.order { 
+                font-family: Arial, Helvetica, sans-serif;
+                font-size:15px;
+            }
+            table.description_table {
+                width:350px;
+                border:1px solid #aaa;
+                margin-top: 10px;
+                border-collapse: collapse;
+                table-layout:fixed;
+                thead { 
+                    font-size:11px; 
+                    font-family: Arial, Helvetica, sans-serif;
+                }
+                .quality_column { 
+                    width:50px;
+                    text-align:center;
+                }
+                .label_column {
+                    width:340px;
+                    padding-left:5px;
+                }
+
+                th, td { border:1px solid #aaa; }
+                td.desc_label_term {  
+                    padding:10px 5px 10px 5px;
+                    text-transform: lowercase;
+                }
+                li.desc_label{
+                    p.hidden { 
+                        display:none;
+                        clear:both;
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+
+div.alldescriptions {
+    div.topicIdx {
+        margin-top:-10px;
+        .title {
+            font-family: sans-serif, helvetica;
+            font-size:20px;
+            font-weight:800;
+            margin-right:20px;
+        }
+        
+    }
+    div.documents{
+        float:left;
+        width:45%;
+        ul{
+            list-style-type:none;   list-style:none;    margin:0px;     padding:0px;
+            li.document_li{
+                list-style-type:none;   list-style:none;   
+                margin-top:15px;
+                div.doc_title{
+                    font-weight:800;
+                    span.doc_probability{
+
+                    }
+                    a.show_more {
+                        font-family:helvetica;
+                        font-weight:500;
+                        font-size:11px;
+                        color:@grassgreen;
+                        cursor:pointer;
+                    }
+                }
+                div.doc_fulltext {
+                    font-size:0.9em;
+                    display:none;
+                }
+            }
+        }
+    }
+    div.descriptions {
+        float:left;
+        width:50%;
+        margin-left:30px;
+        margin-top:15px;
+        label.word_setting{
+            margin-top:10px;
+        }
+        div.topic_terms {
+            ul { list-style-type:none;   list-style:none;    margin:0px;     padding:0px;
+                li { 
+                        font-family:arial;
+                        display:inline-block;
+                        list-style-type:none;
+                        list-style:none;
+                        margin:1px;
+                        background:#ddd;
+                        border-radius:3px;
+                        font-size:13px;
+                }
+            }
+        }
+        label.shortOrLong_setting{
+            display:block;
+            font-size:11px;     font-weight:800; font-color:#666;
+            font-family:helvetica;
+        }
+        table {
+            width:100%;
+            margin-bottom:10px;
+            td {
+                width:25%; 
+                vertical-align:top;
+            }
+        }
+
+
+        ol{
+            font-size:12px;
+            margin:0px;     padding:0px;
+            li {
+                margin-left:20px;     padding:0px;
+            }
+        }
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

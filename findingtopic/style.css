@@ -74,12 +74,6 @@ div.topic_representation ul.topic_list {
   list-style: none;
   padding: 0px;
 }
-table,
-th,
-td {
-  border: 1px solid #ccc;
-  width: 1500px;
-}
 div.topic_rep {
   width: 400px;
   height: 250px;
@@ -253,6 +247,7 @@ div.introduction {
   line-height: 1.5em;
   padding: 10px;
   font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 div.instruction {
   margin: 0;
@@ -287,4 +282,182 @@ table.reportTable ul.wordList li {
   background: #ddd;
   border-radius: 3px;
   font-size: 13px;
+}
+div.evaluation_container div.instruction {
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #000;
+}
+div.evaluation_container ul.evaluation_list {
+  list-style-type: none;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+div.evaluation_container ul.evaluation_list li.evaluation {
+  list-style-type: none;
+  list-style: none;
+  clear: both;
+}
+div.evaluation_container ul.evaluation_list div.documents {
+  float: left;
+  width: 480px;
+  padding-right: 30px;
+}
+div.evaluation_container ul.evaluation_list div.documents ul {
+  list-style-type: none;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+div.evaluation_container ul.evaluation_list div.documents ul li {
+  list-style-type: none;
+  list-style: none;
+  cursor: zoom-in;
+  margin-bottom: 15px;
+}
+div.evaluation_container ul.evaluation_list div.documents ul li div.doc_title {
+  font-family: Helvetica, sans-serif;
+  font-weight: 800;
+  font-size: 1.1em;
+}
+div.evaluation_container ul.evaluation_list div.documents ul li div.doc_title a.show_more {
+  display: block;
+  margin-top: 3px;
+  font-family: helvetica;
+  font-weight: 500;
+  font-size: 11px;
+  color: #aaa;
+}
+div.evaluation_container ul.evaluation_list div.documents ul li div.doc_fulltext {
+  font-size: 0.9em;
+  display: none;
+}
+div.evaluation_container ul.evaluation_list .descriptions {
+  width: 500px;
+  float: left;
+}
+div.evaluation_container ul.evaluation_list .descriptions label.order {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+}
+div.evaluation_container ul.evaluation_list .descriptions table.description_table {
+  width: 350px;
+  border: 1px solid #aaa;
+  margin-top: 10px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+div.evaluation_container ul.evaluation_list .descriptions table.description_table thead {
+  font-size: 11px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+div.evaluation_container ul.evaluation_list .descriptions table.description_table .quality_column {
+  width: 50px;
+  text-align: center;
+}
+div.evaluation_container ul.evaluation_list .descriptions table.description_table .label_column {
+  width: 340px;
+  padding-left: 5px;
+}
+div.evaluation_container ul.evaluation_list .descriptions table.description_table th,
+div.evaluation_container ul.evaluation_list .descriptions table.description_table td {
+  border: 1px solid #aaa;
+}
+div.evaluation_container ul.evaluation_list .descriptions table.description_table td.desc_label_term {
+  padding: 10px 5px 10px 5px;
+  text-transform: lowercase;
+}
+div.evaluation_container ul.evaluation_list .descriptions table.description_table li.desc_label p.hidden {
+  display: none;
+  clear: both;
+}
+div.alldescriptions div.topicIdx {
+  margin-top: -10px;
+}
+div.alldescriptions div.topicIdx .title {
+  font-family: sans-serif, helvetica;
+  font-size: 20px;
+  font-weight: 800;
+  margin-right: 20px;
+}
+div.alldescriptions div.documents {
+  float: left;
+  width: 45%;
+}
+div.alldescriptions div.documents ul {
+  list-style-type: none;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+div.alldescriptions div.documents ul li.document_li {
+  list-style-type: none;
+  list-style: none;
+  margin-top: 15px;
+}
+div.alldescriptions div.documents ul li.document_li div.doc_title {
+  font-weight: 800;
+}
+div.alldescriptions div.documents ul li.document_li div.doc_title a.show_more {
+  font-family: helvetica;
+  font-weight: 500;
+  font-size: 11px;
+  color: #889a0f;
+  cursor: pointer;
+}
+div.alldescriptions div.documents ul li.document_li div.doc_fulltext {
+  font-size: 0.9em;
+  display: none;
+}
+div.alldescriptions div.descriptions {
+  float: left;
+  width: 50%;
+  margin-left: 30px;
+  margin-top: 15px;
+}
+div.alldescriptions div.descriptions label.word_setting {
+  margin-top: 10px;
+}
+div.alldescriptions div.descriptions div.topic_terms ul {
+  list-style-type: none;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+div.alldescriptions div.descriptions div.topic_terms ul li {
+  font-family: arial;
+  display: inline-block;
+  list-style-type: none;
+  list-style: none;
+  margin: 1px;
+  background: #ddd;
+  border-radius: 3px;
+  font-size: 13px;
+}
+div.alldescriptions div.descriptions label.shortOrLong_setting {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  font-color: #666;
+  font-family: helvetica;
+}
+div.alldescriptions div.descriptions table {
+  width: 100%;
+  margin-bottom: 10px;
+}
+div.alldescriptions div.descriptions table td {
+  width: 25%;
+  vertical-align: top;
+}
+div.alldescriptions div.descriptions ol {
+  font-size: 12px;
+  margin: 0px;
+  padding: 0px;
+}
+div.alldescriptions div.descriptions ol li {
+  margin-left: 20px;
+  padding: 0px;
 }

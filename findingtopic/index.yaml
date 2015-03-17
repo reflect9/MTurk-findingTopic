@@ -10,6 +10,22 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Document
+  properties:
+  - name: topicIdx
+  - name: probability
+
+- kind: Document
+  properties:
+  - name: topicIdx
+  - name: probability
+    direction: desc
+
+- kind: Evaluation
+  properties:
+  - name: done
+  - name: topicIdx
+
 - kind: Log
   properties:
   - name: user
