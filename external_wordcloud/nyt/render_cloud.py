@@ -11,8 +11,8 @@ def color_func(word, font_size, position, orientation, random_state=None):
 
 
 def genWordCloud(words_, fileName):
-    words = WordCloud(width=400, height=250, 
-    		prefer_horizontal=1, max_font_size=80, margin=10,
+    words = WordCloud(width=1600, height=1000, 
+    		prefer_horizontal=1, max_font_size=320, margin=40,
     		color_func=color_func, background_color="white", 
     		font_path='arial.ttf')
     # words.generate(text)
@@ -29,8 +29,16 @@ if __name__ == '__main__':
 		topics_cleaned.append(map(lambda x: [x['first'], x['second']], topic['terms']))
 
 	# print topics_cleaned
-	for i, topic in enumerate(topics_cleaned):
-		for k in [5,10,20]:
-			# genWordCloud(topic[:k],"nyt_"+str(i+1)+"_"+str(k));
-			for l in [1,2,3,4,5]:
-				genWordCloud(topic[:k],"nyt_"+str(i)+"_"+str(k)+"_"+str(l));
+	# for i, topic in enumerate(topics_cleaned):
+	# 	for k in [5,10,20]:
+	# 		# genWordCloud(topic[:k],"nyt_"+str(i+1)+"_"+str(k));
+	# 		for l in [1,2,3,4,5]:
+	# 			genWordCloud(topic[:k],"nyt_"+str(i)+"_"+str(k)+"_"+str(l));
+
+
+	# generate high-res clouds
+	i=6
+	topic = topics_cleaned[6]
+	for k in [5,10,20]:
+		for l in range(10):
+			genWordCloud(topic[:k],"highres_wordcloud_"+str(k)+"_"+str(l))

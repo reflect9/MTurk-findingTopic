@@ -25,6 +25,7 @@ indexes:
   properties:
   - name: done
   - name: topicIdx
+  - name: updated
 
 - kind: Log
   properties:

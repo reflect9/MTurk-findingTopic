@@ -1,8 +1,9 @@
-import re, json, os, logging, random, string
+import re, json, os, logging, random, string 
 import webapp2, jinja2
 from google.appengine.ext import db
 from google.appengine.api import mail, taskqueue
 from datetime import datetime
+import pprint
 import csv, itertools, operator
 # import nltk.stem.snowball as snowball
 
@@ -15,6 +16,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 VERSION = 4
 CREATED_AFTER_VERSION_4 = "2015-03-03 02:48:04"
 TASK_LIMIT_PER_SETTING = 5
+
+pp = pprint.PrettyPrinter(indent=4)
 
 # stemmer = snowball.EnglishStemmer()
 modes = ['word','histogram','wordcloud','topic-in-a-box']
@@ -90,6 +93,7 @@ class Evaluation(db.Model):
     updated = db.DateTimeProperty()
     usercode = db.StringProperty()
     memo = db.StringProperty()
+    iter_num = db.IntegerProperty()
 
 class Document(db.Model):
     topicIdx = db.IntegerProperty()
@@ -98,6 +102,10 @@ class Document(db.Model):
     title = db.StringProperty()
     fulltext = db.TextProperty()
 
+
+class LazyTurker(db.Model):
+    validation_code = db.StringProperty()
+    evalResults = db.TextProperty()
 
 ########################################################################################
 ########################################################################################
@@ -145,8 +153,8 @@ class SubmitHandler(webapp2.RequestHandler):
         
 class TaskHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.out.write("All tasks are done.")
-        return
+        # self.response.out.write("All tasks are done.")
+        # return
         trials = 0
         while True:
             mode = random.choice(modes)
@@ -363,31 +371,6 @@ class ReportHandler(webapp2.RequestHandler):
 
         
 
-class CSVHandler(webapp2.RequestHandler):
-    def get(self):
-        pass
-        # self.response.headers['Content-Type'] = 'application/csv'
-        # writer = csv.writer(self.response.out, delimiter='|')
-        # tableName = self.request.get('table', default_value='Answer') # mode can be either 'hit','topic','configuration'
-        # query = db.GqlQuery("SELECT * FROM %s" % tableName)
-        # result = query.fetch()
-
-        # if tableName=='Answer':
-        #     writer.writerow(['topicIdx','wordNum','mode','short','long','conf','duration','created','randomImage_idx',''
-
-
-        # writer.writerow(['usercode','mode','topicIdx','wordNum','short','long','confidence'])
-        # for r in query.run():
-        #     r.ansList = json.loads(r.answers)
-        #     for ans in r.ansList:
-        #         if ans.has_key('topicIndex'):
-        #             tIdx = ans['topicIndex']
-        #         else:
-        #             tIdx = "unknown"
-        #         writer.writerow([r.usercode, r.mode, tIdx, r.wordNum, ans['short'], ans['long'], ans['conf']])
-                #answers += r.usercode+"\t"+r.mode+"\t"+str(ans['topicIndex'])+"\t"+str(r.wordNum)+"\t"+ans['short']+"\t"+ans['long']+"\t"+ans['conf']+"\n"
-        # self.response.out.write(answers)
-
 class AllTasksHandler(webapp2.RequestHandler):
     def get(self):
         # show all tasks in one page
@@ -405,8 +388,10 @@ class AllTasksHandler(webapp2.RequestHandler):
 
 class AllDescriptionsHandler(webapp2.RequestHandler):
     def get(self):   
+        file_evaluation_dict = open("dataset/evaluation_dict.json","r")
+        evaluation_dict = json.loads(file_evaluation_dict.read())
         topicIdx = self.request.get("topicIdx")
-        topicIdx = 11 if topicIdx=="" else int(topicIdx)
+        topicIdx = 0 if topicIdx=="" else int(topicIdx)
         documents = db.GqlQuery("SELECT * FROM Document WHERE topicIdx="+str(topicIdx)+" ORDER BY probability DESC").fetch(10)
         desc_result =db.GqlQuery("SELECT * FROM Description WHERE topicIdx="+ str(topicIdx)).fetch(1000)
         desc_dict = {}
@@ -419,7 +404,7 @@ class AllDescriptionsHandler(webapp2.RequestHandler):
         for desc in desc_result:
             desc_dict[desc.wordNum][desc.shortOrLong][desc.mode].append(desc)
         topic_terms = [t['first'] for t in topicJSON['topics'][topicIdx]['terms']]
-        template_values = {'topic_terms':topic_terms, 'topicIdx':topicIdx, 'descriptions':desc_dict, 'documents':documents, 'modes':modes, 'wordNums':wordNums}
+        template_values = {'topic_terms':topic_terms, 'topicIdx':topicIdx, 'descriptions':desc_dict, 'documents':documents, 'modes':modes, 'wordNums':wordNums, 'evaluation_dict':evaluation_dict}
         template = JINJA_ENVIRONMENT.get_template('alldescriptions.html')
         html = template.render(template_values)
         self.response.out.write(html)
@@ -526,6 +511,9 @@ class InitializeEvaluateHandler(webapp2.RequestHandler):
                     db.delete(results)
         if req=="evaluation":
             # POPULATE Evaluation
+            # 50 topic * 3 wordNum * 5 labels * 2 [short or long]  = 1500 tasks
+            # 1500 / 5 tasks per HIT = 300 HIT for one iteration
+            # 300 * $0.5 = $150 total
             tir = int(self.request.get("ti"))
             for topicIdx in range(tir,tir+10): 
                 for wordNum in wordNums:
@@ -537,40 +525,28 @@ class InitializeEvaluateHandler(webapp2.RequestHandler):
                             newEval.shortOrLong = shortOrLong
                             newEval.done = False 
                             players = []
-                            for mode in modes:
-                                key_name = str(topicIdx)+"-"+str(wordNum)+"-"+mode+"-"+str(descNumber)+"-"+shortOrLong
+                            offset_per_mode = 1 # when adding players, use different descNumbers with this offset 
+                            for mi, mode in enumerate(modes):
+                                key_name = str(topicIdx)+"-"+str(wordNum)+"-"+mode+"-"+str((descNumber+(mi*offset_per_mode))%5)+"-"+shortOrLong
                                 players.append(key_name)
                             newEval.players = players
+                            newEval.iter_num=2
                             newEval.put()
-        # if req=="evaluation_20_multichoice":
-        #     for topicIdx in [0,30,40]:
-        #         for wordNum in wordNums:
-        #             for shortOrLong in ['short','long']:
-        #                 for i in range(5):
-        #                     newEval = Evaluation()
-        #                     newEval.topicIdx = topicIdx
-        #                     newEval.wordNum = wordNum
-        #                     newEval.winner = None
-        #                     newEval.shortOrLong = shortOrLong
-        #                     newEval.done = False 
-        #                     newEval.memo = "20_multichoice"
-        #                     players = []
-        #                     for mode, descNumber in itertools.product(modes,range(5)):
-        #                         key_name = str(topicIdx)+"-"+str(wordNum)+"-"+mode+"-"+str(descNumber)+"-"+shortOrLong
-        #                         players.append(key_name)
-        #                     newEval.players = players
-        #                     newEval.put()
-
-
 
 class EvaluateHandler(webapp2.RequestHandler):
     def get(self):
+        logging.debug("REMAINING EVALS: "+ str(db.GqlQuery("SELECT * FROM Evaluation WHERE done=False").count()))
         # DRAW FIVE EVALUATIONS
-        evaluations = []
         count=0
+        avail_topic_idx = {}
+        eval_samples = db.GqlQuery("SELECT * FROM Evaluation WHERE done=False").fetch(100)
+        for es in eval_samples:
+            avail_topic_idx[int(es.topicIdx)] = 1
+        logging.info("Available Evalutions' topicidx: "+str(avail_topic_idx.keys()))
         # GET 5 EVALUATIONS OF DICTINCT TOPICS
         while True:
-            random_ti = random.sample(range(50),5)
+            evaluations = []
+            random_ti = random.sample(avail_topic_idx.keys(),5)
             while True:
                 shortOrLong_list =[random.choice(["short","long"]) for i in range(5)]
                 if "short" in shortOrLong_list: break
@@ -580,18 +556,20 @@ class EvaluateHandler(webapp2.RequestHandler):
                 ev = q.get()
                 if ev!=None:
                     evaluations.append(ev)
+
+            # CHECK WHETHER WE FOUND 5 EVALUATIONS (OF DISTINCT TOPICS) THAT HAVE AT LEAST 1 SHORT         
             if len(evaluations)==5:
                 logging.debug([ev.topicIdx for ev in evaluations])
                 logging.debug("GOT 5 EVALUATIONS WITH DISCINCT TOPICS")
                 break
             else:
                 count += 1
-                if count==10:
+                if count==100:
                     logging.error("EXCEED 10 trial limit when getting 5 distinct evaluations")
                     return
                 else:
                     logging.debug([ev.topicIdx for ev in evaluations])
-                    logging.debug("PICKED "+ str(len(ev_dict.keys())) + " EVALAUTIONS. TRYING AGAIN.")
+                    # logging.debug("PICKED "+ str(len(ev_dict.keys())) + " EVALAUTIONS. TRYING AGAIN.")
                     continue
         # NOW PREPARE DESCRIPTIONS FOR EACH EVALUATION TASK
         bad_label_used = False
@@ -607,15 +585,7 @@ class EvaluateHandler(webapp2.RequestHandler):
                 desc_dict[cleanedLabel].append(desc)
             # FOR SHORT, ADD ALGORITHM GENERATED DESCRIPTION 
             if evaluation.shortOrLong=="short":
-                algo_desc = {
-                    'usercode': "algorithm",
-                    'topic': evaluation.topicIdx,
-                    'label': algorithm_labels[evaluation.topicIdx][0],
-                    'cleaned_label': re.sub(r"\W+",r"",algorithm_labels[evaluation.topicIdx][0].lower())  
-                }
-                if algo_desc['cleaned_label'] not in desc_dict: desc_dict[algo_desc['cleaned_label']]=[] 
-                desc_dict[algo_desc['cleaned_label']].append(algo_desc)
-                # ADD BAD LABEL
+                # ADD BAD LABEL FOR THE FIRST SHORT TASK
                 if bad_label_used==False:
                     bad_label_used=True
                     bad_label = random.choice(bad_labels)
@@ -628,7 +598,28 @@ class EvaluateHandler(webapp2.RequestHandler):
                     }
                     if bad_desc['cleaned_label'] not in desc_dict: desc_dict[bad_desc['cleaned_label']]=[] 
                     desc_dict[bad_desc['cleaned_label']].append(bad_desc)
-            print desc_dict.keys()
+                    # ALSO MARK THE EVALUATION AS DUMMY EVAL
+                    evaluation.memo = "dummy"
+                else:  # ADD ALGO LABEL FOR THE REST Of SHORT TASKS
+                    algo_desc = {
+                        'usercode': "algorithm",
+                        'topic': evaluation.topicIdx,
+                        'label': algorithm_labels[evaluation.topicIdx][0],
+                        'cleaned_label': re.sub(r"\W+",r"",algorithm_labels[evaluation.topicIdx][0].lower())  
+                    }
+                    if algo_desc['cleaned_label'] not in desc_dict: desc_dict[algo_desc['cleaned_label']]=[] 
+                    desc_dict[algo_desc['cleaned_label']].append(algo_desc)
+            logging.debug("TOPIC:%d, WORDNUM:%d, SHORTORLONG:%s" % (evaluation.topicIdx, evaluation.wordNum, evaluation.shortOrLong))
+
+            # for cl, dlist in desc_dict.iteritems():
+                # for d in dlist:
+                    # print isinstance(d, Description)
+                    # if isinstance(d, Description):
+                    #     print d.label + ", " + d.usercode
+                    # else:
+                    #     print d['label'] + ", " + d['usercode']
+            # pp.pprint(desc_dict)
+            # print [[(desc[label, desc.usercode) for desc in desc_l] for cleaned_label, desc_l in desc_dict.iteritems()]
             # END ADDING ALGORITHM GENERATED DESC
             evaluation.desc_dict = desc_dict.items()
             random.shuffle(evaluation.desc_dict)
@@ -645,9 +636,26 @@ class EvaluateHandler(webapp2.RequestHandler):
 
 class EvaluationSubmitHandler(webapp2.RequestHandler):
     def post(self):
+        logging.debug(self.request.get("evalResults"))
         evalResults = json.loads(self.request.get("evalResults"))
         validation_code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8))
+        # CHECK WHETHER THE TURKER IDENTIFIED BAD LABELS AS WORST
+        def check(x):  return "bad" in str(x['worst']) 
+        if any(map(check, evalResults))==False:
+            logging.error("THe turker ("+validation_code+") did not identify the bad label.")
+            lt = LazyTurker()
+            lt.validation_code = validation_code
+            lt.evalResults = self.request.get("evalResults")
+            lt.put()
+            self.response.out.write("<div class='endMessage'>Thank you for your participation. Your survey code is <b style='color:red;'>"+validation_code+"</b><br> Do not forget to copy and paste the code in the Amazon Mechanical Turk page.</div>");
+            return
+        # FIND AND MODIFY EVALUATION DATAOBJECT
         for evaluation in evalResults:
+            logging.debug(evaluation)
+            if 'memo' in evaluation:
+                if evaluation['memo']=="dummy": 
+                    logging.error("SKIPPING DUMMY TASK")
+                    continue
             eval_object = Evaluation.get_by_id(int(evaluation['eID']))
             eval_object.best = evaluation['best']
             eval_object.worst = evaluation['worst']
@@ -711,7 +719,6 @@ app = webapp2.WSGIApplication([
     ('/submit', SubmitHandler),
     ('/report', ReportHandler),
     ('/alltasks', AllTasksHandler),
-    ('/csv', CSVHandler),
     ('/updateCounter', UpdateCounter),
     ('/initializeEvaluate', InitializeEvaluateHandler),
     ('/evaluate', EvaluateHandler),

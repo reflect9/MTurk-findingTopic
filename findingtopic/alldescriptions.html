@@ -33,7 +33,7 @@
 		 		<div class='doc_title'>{{document.title}}<span class='doc_probability'>{{document.prob}}</span></div>
 		 		<div class='doc_fulltext'>{{document.fulltext[:170]}}
                     <a class='show_more'>... MORE</a>
-                    <span class='rest'>{{document.fulltext[170:]}}
+                    <span class='rest'>{{document.fulltext[170:440]}}
                     </span>
                 </div>
 		 	</li>
@@ -62,8 +62,18 @@
 	 					<label class='desc_setting'>{{mode}}</label><br>
 		 				<ol class='desc_labels' type="a">
 		 					{% for desc in descMode %}
+		 					{% set k = topicIdx|string + "-" + wordNum|string +"-"+mode+"-"+loop.index0|string +"-"+shortOrLong   %}
 		 					<li class='desc_label'>
 		 						{{desc.label}}
+		 						{% if k in evaluation_dict %}
+		 							{% for i in range(evaluation_dict[k]['best']) %}
+		 							<span class='eval_best'> + </span>
+		 							{% endfor %}
+		 							{% for i in range(evaluation_dict[k]['worst']) %}
+		 								<span class='eval_worst'> - </span>
+		 							{% endfor %}
+		 						{% endif %}
+		 						
 		 					</li>
 		 					{% endfor %}
 		 				</ol>

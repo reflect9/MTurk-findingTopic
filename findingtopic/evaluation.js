@@ -5,7 +5,7 @@ function validateAnswers() {
 	var box_best = $(visibleTopic).find("input[name='quality_best']:checked");
 	var box_worst = $(visibleTopic).find("input[name='quality_worst']:checked");
 	if(box_best.length != 1 || box_worst.length != 1) {
-		$("li.evaluation:visible").find(".errorMessage").text("You can proceed after chossing the best and worst labels.");
+		$("li.evaluation:visible").find(".errorMessage").text("You can proceed after choosing the best and worst labels.");
 		return false;
 	} else {
 		var kn_best = $.makeArray($(box_best).parent().parent().find("p.desc_data").map(function() {
@@ -14,6 +14,15 @@ function validateAnswers() {
 		var kn_worst = $.makeArray($(box_worst).parent().parent().find("p.desc_data").map(function() {
 			return $(this).attr("keyname"); 
 		}));
+		var algorithm_label = $(visibleTopic).find("p.desc_data[keyname='algorithm']");
+		var bad_random_label = $(visibleTopic).find("p.desc_data[keyname*='bad']");
+		if ($(visibleTopic).attr("memo")=="dummy") {
+			var memo="dummy"
+		} else {
+			//var memo = (algorithm_label.length>0)?$(algorithm_label).attr("keyname"):"" 
+			//+ "," + (bad_random_label.length>0)?$(bad_random_label).attr("keyname"):"" 	
+			var memo = "real"
+		}
 		evalResults.push({
 			"eID":$(visibleTopic).attr("eID"),
 			"topicIdx":$(visibleTopic).attr("topicIndex"),
@@ -21,7 +30,8 @@ function validateAnswers() {
 			"shortOrLong":$(visibleTopic).attr("shortOrLong"),
 			"best":kn_best, 
 			"worst":kn_worst, 
-			"duration":((new Date()-timestamp)/1000)
+			"duration":((new Date()-timestamp)/1000),
+			"memo": memo
 		});
 		timestamp = new Date();
 		return true;

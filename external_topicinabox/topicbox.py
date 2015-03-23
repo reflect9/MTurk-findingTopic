@@ -59,38 +59,50 @@ def topicbox_graph(word_limit=20):
 
 
 
+def generate_all():
+	for wl in [5,10,20]:
+		Gs = topicbox_graph(word_limit=wl)
+		for i,G in enumerate(Gs):
+			for il in [1,2,3,4,5]:
+				pos = nx.spring_layout(Gs[i], scale=1, k=0.4)
+				node_size = list((data['probability']*150000) for term,data in Gs[i].nodes(data=True))
+				# pp.pprint(node_size)
+				plt.figure(figsize=(4,2.5), dpi=200)
 
-# pp.pprint(Gs[0].nodes())
-# for edge in Gs[0].edges_iter():
-# 	pp.pprint(edge.weight)
-# for n,nbrs in Gs[0].adjacency_iter():
-# 	for nbr,eattr in nbrs.items():
-# 		data=eattr['weight']
-# 		print('(%s, %s, %.3f)' % (n,nbr,data))
-for wl in [5,10,20]:
-	Gs = topicbox_graph(word_limit=wl)
-	for i,G in enumerate(Gs):
-		for il in [1,2,3,4,5]:
+
+				nx.draw_networkx_nodes(Gs[i], pos=pos, node_size=node_size, node_color='gray', alpha=0.25, linewidths=0)
+				nx.draw_networkx_edges(Gs[i], pos=pos, alpha=0.25, width=1)
+				nx.draw_networkx_labels(Gs[i], pos=pos, font_size=8)
+				plt.axis('off')
+				# cut = 1.05
+				# xmax= cut*max(xx for xx,yy in pos.values())
+				# ymax= cut*max(yy for xx,yy in pos.values())
+				# plt.xlim(0,xmax)
+				# plt.ylim(0,ymax)
+				plt.savefig("topicBox_"+str(i+1)+"_"+str(wl)+"_"+str(il)+".png", bbox_inches='tight', dpi=200)
+				print "topicBox_"+str(i+1)+"_"+str(wl)+"_"+str(il)+".png"
+				plt.close()
+				# plt.show()
+
+
+def generate(topicIdx):
+	i = topicIdx
+	for wl in [5,10,20]:
+		Gs = topicbox_graph(word_limit=wl)
+		for il in range(10):
 			pos = nx.spring_layout(Gs[i], scale=1, k=0.4)
 			node_size = list((data['probability']*150000) for term,data in Gs[i].nodes(data=True))
-			# pp.pprint(node_size)
-			plt.figure(figsize=(4,2.5), dpi=200)
-
-
+			plt.figure(figsize=(4,2.5), dpi=500)
 			nx.draw_networkx_nodes(Gs[i], pos=pos, node_size=node_size, node_color='gray', alpha=0.25, linewidths=0)
 			nx.draw_networkx_edges(Gs[i], pos=pos, alpha=0.25, width=1)
 			nx.draw_networkx_labels(Gs[i], pos=pos, font_size=8)
 			plt.axis('off')
-			# cut = 1.05
-			# xmax= cut*max(xx for xx,yy in pos.values())
-			# ymax= cut*max(yy for xx,yy in pos.values())
-			# plt.xlim(0,xmax)
-			# plt.ylim(0,ymax)
-			plt.savefig("topicBox_"+str(i+1)+"_"+str(wl)+"_"+str(il)+".png", bbox_inches='tight', dpi=200)
-			print "topicBox_"+str(i+1)+"_"+str(wl)+"_"+str(il)+".png"
+			plt.savefig("highres_topicbox_"+str(i+1)+"_"+str(wl)+"_"+str(il)+".png", bbox_inches='tight', dpi=500)
+			print "highres_topicbox_"+str(i+1)+"_"+str(wl)+"_"+str(il)+".png"
 			plt.close()
-			# plt.show()
 
+
+generate(6)
 
 
 # G=nx.Graph()

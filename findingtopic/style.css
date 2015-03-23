@@ -393,23 +393,22 @@ div.alldescriptions div.documents ul {
   margin: 0px;
   padding: 0px;
 }
-div.alldescriptions div.documents ul li.document_li {
+div.alldescriptions div.documents ul li {
   list-style-type: none;
   list-style: none;
   margin-top: 15px;
 }
-div.alldescriptions div.documents ul li.document_li div.doc_title {
+div.alldescriptions div.documents ul li div.doc_title {
   font-weight: 800;
+  font-family: sans-serif, helvetica, Arial;
 }
-div.alldescriptions div.documents ul li.document_li div.doc_title a.show_more {
-  font-family: helvetica;
-  font-weight: 500;
-  font-size: 11px;
-  color: #889a0f;
-  cursor: pointer;
+div.alldescriptions div.documents ul li div.doc_fulltext {
+  font-size: 13px;
 }
-div.alldescriptions div.documents ul li.document_li div.doc_fulltext {
-  font-size: 0.9em;
+div.alldescriptions div.documents ul li div.doc_fulltext .show_more {
+  color: #92ba67;
+}
+div.alldescriptions div.documents ul li div.doc_fulltext .rest {
   display: none;
 }
 div.alldescriptions div.descriptions {
@@ -451,6 +450,20 @@ div.alldescriptions div.descriptions table {
 div.alldescriptions div.descriptions table td {
   width: 25%;
   vertical-align: top;
+}
+div.alldescriptions div.descriptions table td li.desc_label span.eval_best {
+  color: white;
+  text-align: center;
+  display: inline-block;
+  width: 10px;
+  background-color: blue;
+}
+div.alldescriptions div.descriptions table td li.desc_label span.eval_worst {
+  color: white;
+  text-align: center;
+  display: inline-block;
+  width: 10px;
+  background-color: red;
 }
 div.alldescriptions div.descriptions ol {
   font-size: 12px;

@@ -385,102 +385,102 @@ with open('csv_backup_3/Answer.csv', mode='r') as infile:
 
 
 # ANALYSIS 5c. FURTHER ANALYSIS OF SHARED TERMS
-stemmer = snowball.EnglishStemmer()
-all_data = {}
+# stemmer = snowball.EnglishStemmer()
+# all_data = {}
 
-for topicIdx in range(0,50):
-	# print "\n\n=============== TOPIC "+str(topicIdx)+" =========================="
-	topicTerms_raw = topicJSON['topics'][str(topicIdx)]['terms']
-	topicTerms = {}
-	for term in topicTerms_raw:
-		tStr = term['first']
-		prob = term['second']
-		if tStr not in topicTerms: 
-			topicTerms[tStr] = prob
-		else:
-			topicTerms[tStr] += prob
-	for mode in modes:
-		for wordNum in wordNums:
-			if topicIdx not in all_data:  all_data[topicIdx]={}
-			if mode not in all_data[topicIdx]:  all_data[topicIdx][mode]={}
-			# if wordNum not in all_data[topicIdx][mode]: all_data[topicIdx][mode][wordNum]={}
+# for topicIdx in range(0,50):
+# 	# print "\n\n=============== TOPIC "+str(topicIdx)+" =========================="
+# 	topicTerms_raw = topicJSON['topics'][str(topicIdx)]['terms']
+# 	topicTerms = {}
+# 	for term in topicTerms_raw:
+# 		tStr = term['first']
+# 		prob = term['second']
+# 		if tStr not in topicTerms: 
+# 			topicTerms[tStr] = prob
+# 		else:
+# 			topicTerms[tStr] += prob
+# 	for mode in modes:
+# 		for wordNum in wordNums:
+# 			if topicIdx not in all_data:  all_data[topicIdx]={}
+# 			if mode not in all_data[topicIdx]:  all_data[topicIdx][mode]={}
+# 			# if wordNum not in all_data[topicIdx][mode]: all_data[topicIdx][mode][wordNum]={}
 
-			# print "--------%s----" % mode+" "+str(wordNum)
-			if mode!="topic-in-a-box":
-				records = [a for a in answers if a['mode']==mode and a['wordNum']==wordNum and int(a['topicIdx'])==topicIdx]
-			else:
-				records = [a for a in answers if a['mode']==mode and a['wordNum']==wordNum and int(a['topicIdx'])==topicIdx+1]
-			# now analyze terms in the records
-			shorts_raw = [r['short'] for r in records] 
-			shorts = [re.sub('[^0-9a-zA-Z ]+', '', r['short']).split(" ") for r in records] 
-			shorts = [[stemmer.stem(s.lower()) for s in sl if len(s)>0] for sl in shorts] # removing empty tokens and lowercase
-			# print "SHORT DESCRIPTIONS: "+str(shorts_raw)
-			# print "STEMMED DESCRIPTIONS: "+str(shorts)
-			# # print "TOPIC TERMS: "+ str(topicTerms_raw[:int(wordNum)])
-			# print "STEMMED TOPIC TERMS: "+ str([term for term, data in sorted(topicTerms.iteritems(),key=lambda k: k[1], reverse=True)[:int(wordNum)]])
-			bag = {term:{'prob':prob, 'freq':0} for term, prob in topicTerms.iteritems()} 
-			for sl in shorts:
-				for s in sl:
-					if s in bag:   
-						bag[s]['freq'] += 1
-			# pp.pprint(sorted(bag.iteritems(), key=lambda k:k[1]['prob'], reverse=True))
-			all_data[topicIdx][mode][wordNum]=bag
-			# terms_taken_from_topic = [[s for s in sl if s in topicTerms[:int(wordNum)]] for sl in shorts]
-			# print terms_taken_from_topic
-			# if len(terms_taken_from_topic)>0:
-			# 	avg_num_words_from_topic = sum([len(s) for s in terms_taken_from_topic]) / (len(terms_taken_from_topic) *1.0)
-			# 	print avg_num_words_from_topic
-			# 	all_data[mode][wordNum].append(avg_num_words_from_topic)
-			# longs = [r['long'] for r in records] 
-
-
-fig = plt.figure(2,facecolor="white")
-ax = fig.add_subplot(111)
-prob = []
-freq = []
-for mode in modes:
-	for wordNum in wordNums:		
-		for topicIdx in range(50):
-			bag = all_data[topicIdx][mode][wordNum]
-			for term, data in bag.iteritems():
-				prob.append(data['prob'])
-				freq.append(data['freq']+random.uniform(-0.15,0.15))
+# 			# print "--------%s----" % mode+" "+str(wordNum)
+# 			if mode!="topic-in-a-box":
+# 				records = [a for a in answers if a['mode']==mode and a['wordNum']==wordNum and int(a['topicIdx'])==topicIdx]
+# 			else:
+# 				records = [a for a in answers if a['mode']==mode and a['wordNum']==wordNum and int(a['topicIdx'])==topicIdx+1]
+# 			# now analyze terms in the records
+# 			shorts_raw = [r['short'] for r in records] 
+# 			shorts = [re.sub('[^0-9a-zA-Z ]+', '', r['short']).split(" ") for r in records] 
+# 			shorts = [[stemmer.stem(s.lower()) for s in sl if len(s)>0] for sl in shorts] # removing empty tokens and lowercase
+# 			# print "SHORT DESCRIPTIONS: "+str(shorts_raw)
+# 			# print "STEMMED DESCRIPTIONS: "+str(shorts)
+# 			# # print "TOPIC TERMS: "+ str(topicTerms_raw[:int(wordNum)])
+# 			# print "STEMMED TOPIC TERMS: "+ str([term for term, data in sorted(topicTerms.iteritems(),key=lambda k: k[1], reverse=True)[:int(wordNum)]])
+# 			bag = {term:{'prob':prob, 'freq':0} for term, prob in topicTerms.iteritems()} 
+# 			for sl in shorts:
+# 				for s in sl:
+# 					if s in bag:   
+# 						bag[s]['freq'] += 1
+# 			# pp.pprint(sorted(bag.iteritems(), key=lambda k:k[1]['prob'], reverse=True))
+# 			all_data[topicIdx][mode][wordNum]=bag
+# 			# terms_taken_from_topic = [[s for s in sl if s in topicTerms[:int(wordNum)]] for sl in shorts]
+# 			# print terms_taken_from_topic
+# 			# if len(terms_taken_from_topic)>0:
+# 			# 	avg_num_words_from_topic = sum([len(s) for s in terms_taken_from_topic]) / (len(terms_taken_from_topic) *1.0)
+# 			# 	print avg_num_words_from_topic
+# 			# 	all_data[mode][wordNum].append(avg_num_words_from_topic)
+# 			# longs = [r['long'] for r in records] 
 
 
-ax.scatter(prob,freq, s=2, marker="+")
-ax.set_title("Terms probability and Frequency of Being Used in Short Descriptions ")
-ax.set_ylabel("Frequency")   
-ax.set_xlabel("Term Probability")   
-ax.text(0.95, 0.95, "correlation = "+ str(np.corrcoef(prob,freq)[0][1]), ha='right', va='top', transform=ax.transAxes)
-plt.show()
-# DRAW PROB,FREQ scatterplot for different settings
-fig = plt.figure(3,facecolor="white")
-count = 1
-for mode in modes:
-	for wordNum in wordNums:
-		# COLLECT PROB,FREQ INFO FROM ALL TOPICS
-		prob = []
-		freq = []
-		for topicIdx in range(50):
-			bag = all_data[topicIdx][mode][wordNum]
-			for term, data in bag.iteritems():
-				prob.append(data['prob'])
-				freq.append(data['freq']+random.uniform(-0.15,0.15))
-		# LETS DRAW SCATTERPLOT
-		ax = fig.add_subplot(len(modes),len(wordNums),count)
-		ax.tick_params(axis='both',which='major', labelsize=8)
-		ax.tick_params(axis='both',which='minor', labelsize=7)
-		ax.set_ylim(0,8)
-		ax.scatter(prob,freq, s=3, marker='+')
-		ax.text(0.98, 0.98, str(np.corrcoef(prob,freq)[0][1])[:8], ha='right', va='top', transform=ax.transAxes)
-		if count==1 or count==4 or count==7 or count==10:
-			ax.set_ylabel(mode)   
-		if count<10:
-			ax.get_xaxis().set_visible(False)
-		else:
-			ax.set_xlabel(wordNum + " words")   
-		count += 1
-plt.show()
+# fig = plt.figure(2,facecolor="white")
+# ax = fig.add_subplot(111)
+# prob = []
+# freq = []
+# for mode in modes:
+# 	for wordNum in wordNums:		
+# 		for topicIdx in range(50):
+# 			bag = all_data[topicIdx][mode][wordNum]
+# 			for term, data in bag.iteritems():
+# 				prob.append(data['prob'])
+# 				freq.append(data['freq']+random.uniform(-0.15,0.15))
+
+
+# ax.scatter(prob,freq, s=2, marker="+")
+# ax.set_title("Terms probability and Frequency of Being Used in Short Descriptions ")
+# ax.set_ylabel("Frequency")   
+# ax.set_xlabel("Term Probability")   
+# ax.text(0.95, 0.95, "correlation = "+ str(np.corrcoef(prob,freq)[0][1]), ha='right', va='top', transform=ax.transAxes)
+# plt.show()
+# # DRAW PROB,FREQ scatterplot for different settings
+# fig = plt.figure(3,facecolor="white")
+# count = 1
+# for mode in modes:
+# 	for wordNum in wordNums:
+# 		# COLLECT PROB,FREQ INFO FROM ALL TOPICS
+# 		prob = []
+# 		freq = []
+# 		for topicIdx in range(50):
+# 			bag = all_data[topicIdx][mode][wordNum]
+# 			for term, data in bag.iteritems():
+# 				prob.append(data['prob'])
+# 				freq.append(data['freq']+random.uniform(-0.15,0.15))
+# 		# LETS DRAW SCATTERPLOT
+# 		ax = fig.add_subplot(len(modes),len(wordNums),count)
+# 		ax.tick_params(axis='both',which='major', labelsize=8)
+# 		ax.tick_params(axis='both',which='minor', labelsize=7)
+# 		ax.set_ylim(0,8)
+# 		ax.scatter(prob,freq, s=3, marker='+')
+# 		ax.text(0.98, 0.98, str(np.corrcoef(prob,freq)[0][1])[:8], ha='right', va='top', transform=ax.transAxes)
+# 		if count==1 or count==4 or count==7 or count==10:
+# 			ax.set_ylabel(mode)   
+# 		if count<10:
+# 			ax.get_xaxis().set_visible(False)
+# 		else:
+# 			ax.set_xlabel(wordNum + " words")   
+# 		count += 1
+# plt.show()
  
 
 # DRAW BAR CHART OF WORD->MODE
@@ -553,14 +553,257 @@ plt.show()
 
 
 
+# #######################################################################################################################
+# #######################################################################################################################
+# #######################################################################################################################
+# # ANALYSIS 7. LABELING HIT ANALYSIS
+
+# with open('csv_backup_3/LabelingHit.csv', mode='r') as infile:
+#     reader = csv.DictReader(infile)
+#     hits = [rows for rows in reader]
+
+# dict_usercode = {}
+# for hit in hits:
+# 	uc = hit['usercode']
+# 	if uc in dict_usercode:
+# 		dict_usercode[uc] += 1
+# 	else:
+# 		dict_usercode[uc] = 1
+
+# pp.pprint(dict_usercode)
+# print len(dict_usercode.keys())
+# print len(dict_usercode.keys()) * 5
+# print len(answers)
 
 
 
 
 
+# #######################################################################################################################
+# #######################################################################################################################
+# #######################################################################################################################
+# # ANALYSIS 8. EVALUATION ANALYSIS
 
 
 
+
+with open('csv_backup_4/Evaluation.csv', mode='r') as infile:
+    reader = csv.DictReader(infile)
+    evals = [rows for rows in reader]
+    # pp.pprint(evals[:5])
+
+## CREATE DICT FILE FOR ALL_DESCRIPTION PAGE
+## 8-5-topic-in-a-box-3-long
+## topicIdx -> wordNum -> 4 modes + algorithm -> desc -> short/long
+# data = {}
+# for ev in evals:
+# 	if ev['best'] != "":
+# 		best =  re.sub(r'[\[\]\'u]', '', ev['best']).split(", ")
+# 		for kn in best:
+# 			if "bad" in kn: continue
+# 			if kn not in data: 
+# 				data[kn]={'best':0, 'worst':0}
+# 			data[kn]['best']+=1
+# 	if ev['worst'] != "":
+# 		worst =  re.sub(r'[\[\]\'u]', '', ev['worst']).split(", ")
+# 		for kn in worst:
+# 			if "bad" in kn: continue
+# 			if kn not in data: 
+# 				data[kn]={'best':0, 'worst':0}
+# 			data[kn]['worst']+=1
+# with open('csv_backup_4/evaluation_dict.json', 'w') as outfile:
+# 	json.dump(data, outfile, indent=4)
+
+
+
+dict_eval = {}
+for wordNum in wordNums:
+	dict_eval[wordNum]={}
+	for mode in modes+["algorithm"]:
+		dict_eval[wordNum][mode]={}
+		for shortOrLong in ["short","long"]:
+			dict_eval[wordNum][mode][shortOrLong]={'best':0, 'worst':0}
+
+evals = [ev for ev in evals if ev['done']=='True' and "bad" not in ev['worst'] and "bad" not in ev['best'] ]
+for ev in evals:
+	# print "------------------------"
+	# print ev
+	if ev['best'] != "":
+		# print "BEST: "+ev['best']
+		best =  ev['best'].replace("u'","").replace("[","").replace("]","").replace("'","").split(", ")
+		# print best
+		for kn in best:	
+			if kn=="algorithm": mode=kn
+			else: mode = [mode for mode in modes if mode==kn or mode+"-" in kn][0] 
+			# print mode
+			# print dict_eval[ev['wordNum']][mode][ev['shortOrLong']]
+			dict_eval[ev['wordNum']][mode][ev['shortOrLong']]['best'] += 1
+			# print "-->"+str(dict_eval[ev['wordNum']][mode][ev['shortOrLong']])
+	if ev['worst'] != "":
+		# print "WORST: "+ev['worst']
+		worst =  ev['worst'].replace("u'","").replace("[","").replace("]","").replace("'","").split(", ")
+		# print worst
+		for kn in worst:	
+			if kn=="algorithm": mode=kn
+			else: mode = [mode for mode in modes if mode==kn or mode+"-" in kn][0] 
+			# print mode
+			# print dict_eval[ev['wordNum']][mode][ev['shortOrLong']]
+			dict_eval[ev['wordNum']][mode][ev['shortOrLong']]['worst'] += 1
+			# print "-->"+ str(dict_eval[ev['wordNum']][mode][ev['shortOrLong']])
+
+pp.pprint(dict_eval)
+
+# # BAR CHART OF SHORT LABELS (ALSO SHOWS ALGORITHM) 
+fig = plt.figure(1,facecolor="white")
+count=0
+ind = np.arange(5)
+width=0.35
+for wordNum in wordNums:
+	d = dict_eval[wordNum]
+	count+=1
+	ax = fig.add_subplot(3,1,count)
+	best_data = []
+	worst_data = []
+	for mi, mode in enumerate(modes+["algorithm"]):
+		dd = d[mode]
+		best_data.append(dd['short']['best'])
+		worst_data.append(dd['short']['worst'])
+	ax_best= ax.bar(ind, best_data, width, color='b')
+	ax_worst= ax.bar(ind+width, worst_data, width, color='r')
+	ax.set_ylim(0,110)
+	ax.set_ylabel(str(wordNum) + " words")
+	xTickMarks = [mode for mode in modes+["algorithm"]]
+	ax.set_xticks(ind+width)
+	xtickNames = ax.set_xticklabels(xTickMarks)
+	plt.setp(xtickNames)
+
+# plt.legend([ax_best, ax_worst], ('Best','Worst'), loc='upper right')
+
+fig.text(0.03, 0.5, '# of best / worst votes', fontsize=15, ha='center', va='center', rotation='vertical')
+fig.text(0.5, 0.98, 'Label Evaluation (Short)', fontsize=17, ha='center', va='top')
+# ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), modes, loc=1)
+
+plt.show()
+			
+
+# BAR CHART OF LONG LABELS (ALSO SHOWS ALGORITHM) 
+# fig = plt.figure(1,facecolor="white")
+# count=0
+# ind = np.arange(4)
+# width=0.35
+# for wordNum in wordNums:
+# 	d = dict_eval[wordNum]
+# 	count+=1
+# 	ax = fig.add_subplot(3,1,count)
+# 	best_data = []
+# 	worst_data = []
+# 	for mi, mode in enumerate(modes):
+# 		dd = d[mode]
+# 		best_data.append(dd['long']['best'])
+# 		worst_data.append(dd['long']['worst'])
+# 	ax_best= ax.bar(ind, best_data, width, color='b')
+# 	ax_worst= ax.bar(ind+width, worst_data, width, color='r')
+# 	ax.set_ylim(0,85)
+# 	ax.set_ylabel(str(wordNum) + " words")
+# 	xTickMarks = [mode for mode in modes]
+# 	ax.set_xticks(ind+width)
+# 	xtickNames = ax.set_xticklabels(xTickMarks)
+# 	plt.setp(xtickNames)
+
+# # plt.legend([ax_best, ax_worst], ('Best','Worst'), loc='upper right')
+
+# fig.text(0.03, 0.5, '# of best / worst votes', fontsize=15, ha='center', va='center', rotation='vertical')
+# fig.text(0.5, 0.98, 'Label Evaluation (Long)', fontsize=17, ha='center', va='top')
+# # ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), modes, loc=1)
+
+# plt.show()
+		
+
+
+# # # BAR CHART OF SHORT LABELS: DIFFERENCE 
+# fig = plt.figure(1,facecolor="white")
+# count=0
+# ind = np.arange(5)
+# width=0.35
+# for wordNum in wordNums:
+# 	d = dict_eval[wordNum]
+# 	count+=1
+# 	ax = fig.add_subplot(3,1,count)
+# 	diff_data = []
+# 	for mi, mode in enumerate(modes+["algorithm"]):
+# 		dd = d[mode]
+# 		diff_data.append(dd['short']['best']-dd['short']['worst'])
+# 	ax.bar(ind+width/2, diff_data, width=width, color='g')
+# 	ax.set_ylim(-70,50)
+# 	ax.set_ylabel(str(wordNum) + " words")
+# 	xTickMarks = [mode for mode in modes+["algorithm"]]
+# 	ax.set_xticks(ind+width)
+# 	xtickNames = ax.set_xticklabels(xTickMarks)
+# 	plt.setp(xtickNames)
+# 	plt.gca().grid(True)
+
+# # plt.legend([ax_best, ax_worst], ('Best','Worst'), loc='upper right')
+
+# fig.text(0.03, 0.5, '# of best votes - # of worst votes', fontsize=15, ha='center', va='center', rotation='vertical')
+# fig.text(0.5, 0.98, 'Label Evaluation (Short)', fontsize=17, ha='center', va='top')
+# # ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), modes, loc=1)
+# plt.show()
+
+
+
+# # # BAR CHART OF LONG LABELS: DIFFERENCE 
+# fig = plt.figure(1,facecolor="white")
+# count=0
+# ind = np.arange(4)
+# width=0.35
+# for wordNum in wordNums:
+# 	d = dict_eval[wordNum]
+# 	count+=1
+# 	ax = fig.add_subplot(3,1,count)
+# 	diff_data = []
+# 	for mi, mode in enumerate(modes):
+# 		dd = d[mode]
+# 		diff_data.append(dd['long']['best']-dd['long']['worst'])
+# 	ax.bar(ind+width/2, diff_data, width=width, color='g')
+# 	ax.set_ylim(-70,50)
+# 	ax.set_ylabel(str(wordNum) + " words")
+# 	xTickMarks = [mode for mode in modes]
+# 	ax.set_xticks(ind+width)
+# 	xtickNames = ax.set_xticklabels(xTickMarks)
+# 	plt.setp(xtickNames)
+# 	plt.gca().grid(True)
+
+# # plt.legend([ax_best, ax_worst], ('Best','Worst'), loc='upper right')
+
+# fig.text(0.03, 0.5, '# of best votes - # of worst votes', fontsize=15, ha='center', va='center', rotation='vertical')
+# fig.text(0.5, 0.98, 'Label Evaluation (Long)', fontsize=17, ha='center', va='top')
+# # ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), modes, loc=1)
+# plt.show()
+
+	# ax = fig.add_subplot(111)
+
+
+# player_dict = {mode:0 for mode in modes}
+# player_dict['algorithm'] = 0
+# winner_dict = {mode:0 for mode in modes}
+# loser_dict = {mode:0 for mode in modes}
+# winner_dict['algorithm'] = 0
+# loser_dict['algorithm'] = 0
+# for ev in evals:
+# 	players = [mode for mode in player_dict.keys() if mode+"-" in ev['players']]
+# 	for w in players: player_dict[w] += 1
+
+# 	winners = [mode for mode in winner_dict.keys() if mode+"-" in ev['best']]
+# 	for w in winners: winner_dict[w] += 1
+
+# 	losers = [mode for mode in loser_dict.keys() if mode+"-" in ev['worst']]
+# 	for w in losers: loser_dict[w] += 1
+# 	# print ev['best'] + " , " + str(winner)
+
+# pp.pprint(player_dict)
+# pp.pprint(winner_dict)
+# pp.pprint(loser_dict)
+# pp.pprint([winner_dict[mode] - loser_dict[mode] for mode in modes])
 
 
 

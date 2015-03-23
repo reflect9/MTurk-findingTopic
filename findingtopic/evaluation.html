@@ -27,7 +27,7 @@ We are researchers from the University of Maryland attempting to measure how peo
     <ul class='evaluation_list'>
     {% for evaluation in evaluations %}
         {% set eval_idx = loop.index %}
-        <li class='evaluation' questionNumber={{eval_idx}} topicIndex={{evaluation.topicIdx}} wordNum={{evaluation.wordNum}} shortOrLong={{evaluation.shortOrLong}} eID={{evaluation.key().id()}}>
+        <li class='evaluation' questionNumber={{eval_idx}} topicIndex={{evaluation.topicIdx}} wordNum={{evaluation.wordNum}} shortOrLong={{evaluation.shortOrLong}} eID={{evaluation.key().id()}} memo={{evaluation.memo}}>
             <!-- RENDERING DOCUMENTS -->
             <div class="documents">
                 <ul>
