@@ -16,26 +16,24 @@ for bf_name in batch_files:
 	    		dict_turkers[row['Title']][row['WorkerId']]=[]
 	    	dict_turkers[row['Title']][row['WorkerId']].append(row['Answer.surveycode'])
 
-pp.pprint(dict_turkers)
+# pp.pprint(dict_turkers)
 
 
-# hits_per_turker = [len(hitlist) for tid, hitlist in dict_turkers['Word labeling tasks'].iteritems()]
+hits_per_turker = [len(hitlist) for tid, hitlist in dict_turkers['Word labeling tasks'].iteritems()]
+print hits_per_turker
+
+print len(hits_per_turker)
+print np.mean(hits_per_turker), np.std(hits_per_turker), np.max(hits_per_turker), np.min(hits_per_turker)
+
+
+
+# hits_per_turker = [len(hitlist) for tid, hitlist in dict_turkers['Pick the best label for a set of documents'].iteritems()]
 # print hits_per_turker
 
 # print np.mean(hits_per_turker)
 # print np.std(hits_per_turker)
 # print np.max(hits_per_turker)
 # print np.min(hits_per_turker)
-
-
-
-hits_per_turker = [len(hitlist) for tid, hitlist in dict_turkers['Pick the best label for a set of documents'].iteritems()]
-print hits_per_turker
-
-print np.mean(hits_per_turker)
-print np.std(hits_per_turker)
-print np.max(hits_per_turker)
-print np.min(hits_per_turker)
 
 
 

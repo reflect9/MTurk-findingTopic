@@ -533,6 +533,16 @@ class InitializeEvaluateHandler(webapp2.RequestHandler):
                             newEval.iter_num=2
                             newEval.put()
 
+class ShowSingleEvaluationHandler(webapp2.RequestHandler):
+    def get(self):
+        key = self.request.get("key")
+        ev = Evaluation.get_by_id(int(key)) 
+        ev.descriptions = [Description.get_by_key_name(player) for player in ev.players]
+        template_values = {'ev':ev}
+        template = JINJA_ENVIRONMENT.get_template('showSingleEvaluation.html')
+        html = template.render(template_values)
+        self.response.out.write(html)
+
 class EvaluateHandler(webapp2.RequestHandler):
     def get(self):
         logging.debug("REMAINING EVALS: "+ str(db.GqlQuery("SELECT * FROM Evaluation WHERE done=False").count()))
@@ -677,6 +687,21 @@ class ReportEvaluationHandler(webapp2.RequestHandler):
                     winner_desc = db.Description.get_by_key_name(winner)
                     winners.append(winner_desc)
             
+class ResetEvaluationHandler(webapp2.RequestHandler):
+    def get(self):
+        keys_to_reset = self.request.get("keys").split("_")
+        for k in keys_to_reset:
+            ev = Evaluation.get_by_id(int(k))
+            ev.best = []
+            ev.worst = []
+            ev.duration = None
+            ev.done = False 
+            ev.updated = None
+            ev.usercode = None
+            ev.put()
+        self.response.out.write(str(len(keys_to_reset)) + " evaluations were resetted.")
+
+
 
 # class TempFixHandler(webapp2.RequestHandler):
 #     def get(self):
@@ -714,17 +739,18 @@ class ReportEvaluationHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/', TaskHandler),
     ('/task', TaskHandler),
     ('/submit', SubmitHandler),
     ('/report', ReportHandler),
     ('/alltasks', AllTasksHandler),
     ('/updateCounter', UpdateCounter),
     ('/initializeEvaluate', InitializeEvaluateHandler),
+    ('/showSingleEvaluation',ShowSingleEvaluationHandler),
     ('/evaluate', EvaluateHandler),
     ('/evaluationSubmit', EvaluationSubmitHandler),
     ('/allDescriptions', AllDescriptionsHandler),
-    ('/reportEvaluation', ReportEvaluationHandler)
+    ('/reportEvaluation', ReportEvaluationHandler),
+    ('/resetEvaluation', ResetEvaluationHandler)
     # ('/tempFix', TempFixHandler)
     # ('/submit_alltasks', SubmitAllTasksHandler),
     # ('/sendReminder', SendReminderHandler)

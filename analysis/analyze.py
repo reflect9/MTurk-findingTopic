@@ -19,6 +19,10 @@ with open('csv_backup_3/Answer.csv', mode='r') as infile:
     reader = csv.DictReader(infile)
     answers = [rows for rows in reader]
 
+print len(answers)
+
+data = [int(a['duration']) for a in answers if int(a['duration'])>1]
+print np.mean(data), np.std(data), np.max(data), np.min(data)
 
 # ANALYSIS 1. OVERALL DURATION 
 # plt.figure(facecolor="white")
@@ -587,9 +591,9 @@ with open('csv_backup_3/Answer.csv', mode='r') as infile:
 
 
 
-with open('csv_backup_4/Evaluation.csv', mode='r') as infile:
-    reader = csv.DictReader(infile)
-    evals = [rows for rows in reader]
+# with open('csv_backup_4/Evaluation.csv', mode='r') as infile:
+#     reader = csv.DictReader(infile)
+#     evals = [rows for rows in reader]
     # pp.pprint(evals[:5])
 
 ## CREATE DICT FILE FOR ALL_DESCRIPTION PAGE
@@ -615,75 +619,75 @@ with open('csv_backup_4/Evaluation.csv', mode='r') as infile:
 # 	json.dump(data, outfile, indent=4)
 
 
+# ## GENERAL ANALYSIS
+# dict_eval = {}
+# for wordNum in wordNums:
+# 	dict_eval[wordNum]={}
+# 	for mode in modes+["algorithm"]:
+# 		dict_eval[wordNum][mode]={}
+# 		for shortOrLong in ["short","long"]:
+# 			dict_eval[wordNum][mode][shortOrLong]={'best':0, 'worst':0}
 
-dict_eval = {}
-for wordNum in wordNums:
-	dict_eval[wordNum]={}
-	for mode in modes+["algorithm"]:
-		dict_eval[wordNum][mode]={}
-		for shortOrLong in ["short","long"]:
-			dict_eval[wordNum][mode][shortOrLong]={'best':0, 'worst':0}
+# evals = [ev for ev in evals if ev['done']=='True' and "bad" not in ev['worst'] and "bad" not in ev['best'] ]
+# for ev in evals:
+# 	# print "------------------------"
+# 	# print ev
+# 	if ev['best'] != "":
+# 		# print "BEST: "+ev['best']
+# 		best =  ev['best'].replace("u'","").replace("[","").replace("]","").replace("'","").split(", ")
+# 		# print best
+# 		for kn in best:	
+# 			if kn=="algorithm": mode=kn
+# 			else: mode = [mode for mode in modes if mode==kn or mode+"-" in kn][0] 
+# 			# print mode
+# 			# print dict_eval[ev['wordNum']][mode][ev['shortOrLong']]
+# 			dict_eval[ev['wordNum']][mode][ev['shortOrLong']]['best'] += 1
+# 			# print "-->"+str(dict_eval[ev['wordNum']][mode][ev['shortOrLong']])
+# 	if ev['worst'] != "":
+# 		# print "WORST: "+ev['worst']
+# 		worst =  ev['worst'].replace("u'","").replace("[","").replace("]","").replace("'","").split(", ")
+# 		# print worst
+# 		for kn in worst:	
+# 			if kn=="algorithm": mode=kn
+# 			else: mode = [mode for mode in modes if mode==kn or mode+"-" in kn][0] 
+# 			# print mode
+# 			# print dict_eval[ev['wordNum']][mode][ev['shortOrLong']]
+# 			dict_eval[ev['wordNum']][mode][ev['shortOrLong']]['worst'] += 1
+# 			# print "-->"+ str(dict_eval[ev['wordNum']][mode][ev['shortOrLong']])
 
-evals = [ev for ev in evals if ev['done']=='True' and "bad" not in ev['worst'] and "bad" not in ev['best'] ]
-for ev in evals:
-	# print "------------------------"
-	# print ev
-	if ev['best'] != "":
-		# print "BEST: "+ev['best']
-		best =  ev['best'].replace("u'","").replace("[","").replace("]","").replace("'","").split(", ")
-		# print best
-		for kn in best:	
-			if kn=="algorithm": mode=kn
-			else: mode = [mode for mode in modes if mode==kn or mode+"-" in kn][0] 
-			# print mode
-			# print dict_eval[ev['wordNum']][mode][ev['shortOrLong']]
-			dict_eval[ev['wordNum']][mode][ev['shortOrLong']]['best'] += 1
-			# print "-->"+str(dict_eval[ev['wordNum']][mode][ev['shortOrLong']])
-	if ev['worst'] != "":
-		# print "WORST: "+ev['worst']
-		worst =  ev['worst'].replace("u'","").replace("[","").replace("]","").replace("'","").split(", ")
-		# print worst
-		for kn in worst:	
-			if kn=="algorithm": mode=kn
-			else: mode = [mode for mode in modes if mode==kn or mode+"-" in kn][0] 
-			# print mode
-			# print dict_eval[ev['wordNum']][mode][ev['shortOrLong']]
-			dict_eval[ev['wordNum']][mode][ev['shortOrLong']]['worst'] += 1
-			# print "-->"+ str(dict_eval[ev['wordNum']][mode][ev['shortOrLong']])
+# pp.pprint(dict_eval)
 
-pp.pprint(dict_eval)
+# # # BAR CHART OF SHORT LABELS (ALSO SHOWS ALGORITHM) 
+# fig = plt.figure(1,facecolor="white")
+# count=0
+# ind = np.arange(5)
+# width=0.35
+# for wordNum in wordNums:
+# 	d = dict_eval[wordNum]
+# 	count+=1
+# 	ax = fig.add_subplot(3,1,count)
+# 	best_data = []
+# 	worst_data = []
+# 	for mi, mode in enumerate(modes+["algorithm"]):
+# 		dd = d[mode]
+# 		best_data.append(dd['short']['best'])
+# 		worst_data.append(dd['short']['worst'])
+# 	ax_best= ax.bar(ind, best_data, width, color='b')
+# 	ax_worst= ax.bar(ind+width, worst_data, width, color='r')
+# 	ax.set_ylim(0,110)
+# 	ax.set_ylabel(str(wordNum) + " words")
+# 	xTickMarks = [mode for mode in modes+["algorithm"]]
+# 	ax.set_xticks(ind+width)
+# 	xtickNames = ax.set_xticklabels(xTickMarks)
+# 	plt.setp(xtickNames)
 
-# # BAR CHART OF SHORT LABELS (ALSO SHOWS ALGORITHM) 
-fig = plt.figure(1,facecolor="white")
-count=0
-ind = np.arange(5)
-width=0.35
-for wordNum in wordNums:
-	d = dict_eval[wordNum]
-	count+=1
-	ax = fig.add_subplot(3,1,count)
-	best_data = []
-	worst_data = []
-	for mi, mode in enumerate(modes+["algorithm"]):
-		dd = d[mode]
-		best_data.append(dd['short']['best'])
-		worst_data.append(dd['short']['worst'])
-	ax_best= ax.bar(ind, best_data, width, color='b')
-	ax_worst= ax.bar(ind+width, worst_data, width, color='r')
-	ax.set_ylim(0,110)
-	ax.set_ylabel(str(wordNum) + " words")
-	xTickMarks = [mode for mode in modes+["algorithm"]]
-	ax.set_xticks(ind+width)
-	xtickNames = ax.set_xticklabels(xTickMarks)
-	plt.setp(xtickNames)
+# # plt.legend([ax_best, ax_worst], ('Best','Worst'), loc='upper right')
 
-# plt.legend([ax_best, ax_worst], ('Best','Worst'), loc='upper right')
+# fig.text(0.03, 0.5, '# of best / worst votes', fontsize=15, ha='center', va='center', rotation='vertical')
+# fig.text(0.5, 0.98, 'Label Evaluation (Short)', fontsize=17, ha='center', va='top')
+# # ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), modes, loc=1)
 
-fig.text(0.03, 0.5, '# of best / worst votes', fontsize=15, ha='center', va='center', rotation='vertical')
-fig.text(0.5, 0.98, 'Label Evaluation (Short)', fontsize=17, ha='center', va='top')
-# ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), modes, loc=1)
-
-plt.show()
+# plt.show()
 			
 
 # BAR CHART OF LONG LABELS (ALSO SHOWS ALGORITHM) 
@@ -804,12 +808,6 @@ plt.show()
 # pp.pprint(winner_dict)
 # pp.pprint(loser_dict)
 # pp.pprint([winner_dict[mode] - loser_dict[mode] for mode in modes])
-
-
-
-
-
-
 
 
 
