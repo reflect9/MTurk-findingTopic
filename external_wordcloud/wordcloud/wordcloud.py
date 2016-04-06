@@ -174,7 +174,8 @@ class WordCloud(object):
         for word, count in words:
             # alternative way to set the font size
             if not self.ranks_only:
-                font_size = min(font_size, int(100 * np.log(count + 100)))
+                # font_size = min(font_size, int(100 * np.log(count + 100)))
+                font_size = min(font_size, int(max_font_size / (-1 * np.log(count))))
             while True:
                 # try to find a position
                 font = ImageFont.truetype(self.font_path, font_size)

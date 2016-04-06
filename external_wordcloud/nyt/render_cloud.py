@@ -28,17 +28,22 @@ if __name__ == '__main__':
 	for topic in topics:
 		topics_cleaned.append(map(lambda x: [x['first'], x['second']], topic['terms']))
 
-	# print topics_cleaned
-	# for i, topic in enumerate(topics_cleaned):
-	# 	for k in [5,10,20]:
-	# 		# genWordCloud(topic[:k],"nyt_"+str(i+1)+"_"+str(k));
-	# 		for l in [1,2,3,4,5]:
-	# 			genWordCloud(topic[:k],"nyt_"+str(i)+"_"+str(k)+"_"+str(l));
+	print topics_cleaned
+	for i, topic in enumerate(topics_cleaned):
+		for k in [5,10,20]:
+			# genWordCloud(topic[:k],"nyt_"+str(i+1)+"_"+str(k));
+			for l in [1,2,3,4,5]:
+				genWordCloud(topic[:k],"test_"+str(i)+"_"+str(k)+"_"+str(l));
 
 
 	# generate high-res clouds
 	i=6
-	topic = topics_cleaned[6]
-	for k in [5,10,20]:
-		for l in range(10):
-			genWordCloud(topic[:k],"highres_wordcloud_"+str(k)+"_"+str(l))
+	# topic = topics_cleaned[6]
+	# for k in [5,10,20]:
+	# 	for l in range(10):
+	# 		genWordCloud(topic[:k],"highres_wordcloud_"+str(k)+"_"+str(l))
+
+	# topic = topics_cleaned[6]
+	# for k in [20]:
+	# 	for l in range(1):
+	# 		genWordCloud(topic[:k],"test_"+str(k)+"_"+str(l))

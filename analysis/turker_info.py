@@ -3,6 +3,13 @@ import json, math, re, csv, itertools, os
 from datetime import datetime
 import numpy as np
 
+
+# COUNTING UNIQUE TUEKERS
+
+
+
+exit()
+
 path_to_batch_results = "./batch_results"
 batch_files = os.listdir(path_to_batch_results)
 dict_turkers = {}
@@ -19,21 +26,24 @@ for bf_name in batch_files:
 # pp.pprint(dict_turkers)
 
 
-hits_per_turker = [len(hitlist) for tid, hitlist in dict_turkers['Word labeling tasks'].iteritems()]
-print hits_per_turker
+tasks_per_turker = [5*len(hitlist) for tid, hitlist in dict_turkers['Word labeling tasks'].iteritems()]
+print tasks_per_turker
 
-print len(hits_per_turker)
-print np.mean(hits_per_turker), np.std(hits_per_turker), np.max(hits_per_turker), np.min(hits_per_turker)
+print len(tasks_per_turker)
+print np.mean(tasks_per_turker), np.std(tasks_per_turker), np.max(tasks_per_turker), np.min(tasks_per_turker)
 
 
+for k,d in dict_turkers.iteritems():
+	print len(d.keys())
 
-# hits_per_turker = [len(hitlist) for tid, hitlist in dict_turkers['Pick the best label for a set of documents'].iteritems()]
-# print hits_per_turker
 
-# print np.mean(hits_per_turker)
-# print np.std(hits_per_turker)
-# print np.max(hits_per_turker)
-# print np.min(hits_per_turker)
+# tasks_per_turker = [len(hitlist) for tid, hitlist in dict_turkers['Pick the best label for a set of documents'].iteritems()]
+# print tasks_per_turker
+
+# print np.mean(tasks_per_turker)
+# print np.std(tasks_per_turker)
+# print np.max(tasks_per_turker)
+# print np.min(tasks_per_turker)
 
 
 
